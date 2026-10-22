@@ -3,7 +3,7 @@
 
 Usage: python scripts/train.py AAPL [more symbols...]
 Writes ai/cache/<SYM>_daily.json, ai/<SYM>_model.json, ai/<SYM>_backtest.json,
-ai/<SYM>_prediction.json and updates web/data.js for GitHub Pages.
+ai/<SYM>_prediction.json and updates data.js for GitHub Pages.
 """
 import datetime
 import json
@@ -42,7 +42,7 @@ def main():
 
 
 def build_web_data(symbols):
-    """Aggregate all artifacts into web/data.js consumed by the GitHub Page."""
+    """Aggregate all artifacts into data.js consumed by the GitHub Page."""
     root = os.path.join(os.path.dirname(__file__), "..")
     data = {}
     for sym in symbols:
@@ -56,7 +56,7 @@ def build_web_data(symbols):
                          "grades": st.get("grades", [])}
         except Exception as e:  # noqa: BLE001
             print(f"WARN skipping {sym}: {e}")
-    out = os.path.join(root, "web", "data.js")
+    out = os.path.join(root, "data.js")
     with open(out, "w") as f:
         f.write("window.STOCKPRED_DATA = ")
         json.dump(data, f, separators=(",", ":"))

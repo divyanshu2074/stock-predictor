@@ -49,7 +49,7 @@ jobs:
         run: |
           git config user.name "stockpred-bot"
           git config user.email "bot@users.noreply.github.com"
-          git add ai/ web/data.js
+          git add ai/ data.js
           if git diff --cached --quiet; then
             echo "No changes."; 
           else

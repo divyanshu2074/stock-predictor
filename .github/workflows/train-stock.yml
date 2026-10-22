@@ -44,7 +44,7 @@ jobs:
         run: |
           git config user.name "stockpred-bot"
           git config user.email "bot@users.noreply.github.com"
-          git add ai/ web/data.js
+          git add ai/ data.js
           git commit -m "train: recursive-learning bootstrap for ${{ github.event.inputs.symbol }} [skip ci]"
           git push origin HEAD:${{ github.ref_name }}
 

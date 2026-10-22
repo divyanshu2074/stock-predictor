@@ -41,7 +41,7 @@ engine/               # data.py, features.py, models.py, backtest.py, daily.py
 scripts/              # train.py, daily_cycle.py (CLIs used by workflows)
 ai/                   # ← the agent's memory: cache/, *_model.json, *_state.json,
                       #    *_backtest.json, *_prediction.json (auto-committed)
-web/                  # GitHub Pages site (index.html + generated data.js)
+/ (root) # GitHub Pages site (index.html + generated data.js)
 ```
 
 ## Setup (once, ~2 minutes)

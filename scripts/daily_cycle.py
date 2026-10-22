@@ -3,7 +3,7 @@
 
 Usage: python scripts/daily_cycle.py AAPL MSFT ...
 Grades yesterday's forecast, ingests new bars, fine-tunes, re-predicts next day,
-and regenerates web/data.js.
+and regenerates data.js.
 """
 import os
 import sys
