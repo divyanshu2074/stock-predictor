@@ -53,9 +53,6 @@ jobs:
           {
             echo "## ✅ Trained ${{ github.event.inputs.symbol }}"
             for f in ai/*_backtest.json; do
-              sym=$(basename "$f" _backtest.json)
-              python3 -c "
-          import json;s=json.load(open('$f'))['summary']
-          print(f\"**{s['symbol']}**: {s['weeks_simulated']} recursive weeks | mean weekly MAPE {100*s['mean_mape']:.2f}% | median dir-acc {s['median_dir_acc']} | error {'decreased' if s['improvement']['last_half_mape']<s['improvement']['first_half_mape'] else 'increased'} during learning\")"
+              python3 scripts/summarize.py --backtest "$f"
             done
           } >> "$GITHUB_STEP_SUMMARY"

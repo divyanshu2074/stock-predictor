@@ -105,7 +105,13 @@ def run_cycle(symbol, full_backtest=False):
         "model_votes": {m: round(v, 5) for m, v in model.predict_raw(x_last).items()},
     }
     st["cycles"] += 1
-    st["pending"] = pred
+    if st["pending"] is None:  # nothing graded yet -> keep forecasting ahead of last bar
+        import datetime as _dt
+        nd = _dt.date.fromisoformat(last_date) + _dt.timedelta(days=1)
+        while nd.weekday() >= 5:
+            nd += _dt.timedelta(days=1)
+        pred["target_date"] = nd.isoformat()
+        st["pending"] = pred
     _save_state(symbol, st)
 
     # persist refreshed artifacts

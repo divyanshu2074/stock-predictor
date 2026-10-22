@@ -66,10 +66,6 @@ jobs:
               [ -e "$f" ] || continue
               sym=$(basename "$f" _prediction.json)
               echo "### $sym"
-              python3 -c "
-          import json;d=json.load(open('$f'))
-          print(f\"- as of **{d['as_of_date']}** close \\${d['as_of_close']}\")
-          print(f\"- next-day call: **{d['direction']}** ({100*d['predicted_return']:+.2f}%) → target \\${d['predicted_close']} by {d.get('target_date','next session')}\")
-          print(f\"- band: \\${d['confidence_band'][0]} – \\${d['confidence_band'][1]}\")"
+              python3 scripts/summarize.py "$f"
             done
           } >> "$GITHUB_STEP_SUMMARY"
