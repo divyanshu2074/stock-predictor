@@ -1,0 +1,292 @@
+{
+ "summary": {
+  "symbol": "AAPL",
+  "bars": 251,
+  "weeks_simulated": 16,
+  "mean_mape": 0.01516,
+  "median_dir_acc": 0.6,
+  "final_weights": {
+   "ridge": 0.321,
+   "knn": 0.382,
+   "tree": 0.298
+  },
+  "improvement": {
+   "first_half_mape": 0.01699,
+   "last_half_mape": 0.01333
+  },
+  "next_day_prediction": {
+   "as_of_date": "2026-10-21",
+   "as_of_close": 342.1,
+   "predicted_return": 0.00171,
+   "predicted_close": 342.69,
+   "confidence_band": [
+    324.23,
+    359.97
+   ],
+   "model_votes": {
+    "ridge": 0.00023,
+    "knn": 0.00399,
+    "tree": 0.00038
+   },
+   "direction": "UP"
+  }
+ },
+ "history": [
+  {
+   "week": 1,
+   "start_date": "2026-07-07",
+   "end_date": "2026-07-13",
+   "mape": 0.00522,
+   "rmse": 1.9171,
+   "bias": 0.0421,
+   "dir_acc": 0.6,
+   "weights": {
+    "ridge": 0.269,
+    "knn": 0.352,
+    "tree": 0.378
+   },
+   "pred_first": 313.09,
+   "act_first": 310.39
+  },
+  {
+   "week": 2,
+   "start_date": "2026-07-14",
+   "end_date": "2026-07-20",
+   "mape": 0.02969,
+   "rmse": 10.6879,
+   "bias": -8.4494,
+   "dir_acc": 0.4,
+   "weights": {
+    "ridge": 0.273,
+    "knn": 0.377,
+    "tree": 0.35
+   },
+   "pred_first": 317.94,
+   "act_first": 314.59
+  },
+  {
+   "week": 3,
+   "start_date": "2026-07-21",
+   "end_date": "2026-07-27",
+   "mape": 0.01054,
+   "rmse": 4.4121,
+   "bias": 0.9872,
+   "dir_acc": 0.4,
+   "weights": {
+    "ridge": 0.289,
+    "knn": 0.371,
+    "tree": 0.339
+   },
+   "pred_first": 327.54,
+   "act_first": 327.46
+  },
+  {
+   "week": 4,
+   "start_date": "2026-07-28",
+   "end_date": "2026-08-03",
+   "mape": 0.05927,
+   "rmse": 25.2108,
+   "bias": 17.919,
+   "dir_acc": 0.2,
+   "weights": {
+    "ridge": 0.298,
+    "knn": 0.368,
+    "tree": 0.334
+   },
+   "pred_first": 338.71,
+   "act_first": 339.79
+  },
+  {
+   "week": 5,
+   "start_date": "2026-08-04",
+   "end_date": "2026-08-10",
+   "mape": 0.01009,
+   "rmse": 4.1392,
+   "bias": 0.626,
+   "dir_acc": 0.6,
+   "weights": {
+    "ridge": 0.305,
+    "knn": 0.368,
+    "tree": 0.327
+   },
+   "pred_first": 306.04,
+   "act_first": 309.11
+  },
+  {
+   "week": 6,
+   "start_date": "2026-08-11",
+   "end_date": "2026-08-17",
+   "mape": 0.00547,
+   "rmse": 2.2897,
+   "bias": 1.5178,
+   "dir_acc": 0.8,
+   "weights": {
+    "ridge": 0.312,
+    "knn": 0.376,
+    "tree": 0.312
+   },
+   "pred_first": 307.21,
+   "act_first": 304.91
+  },
+  {
+   "week": 7,
+   "start_date": "2026-08-18",
+   "end_date": "2026-08-24",
+   "mape": 0.00889,
+   "rmse": 3.9933,
+   "bias": -2.795,
+   "dir_acc": 0.8,
+   "weights": {
+    "ridge": 0.318,
+    "knn": 0.376,
+    "tree": 0.307
+   },
+   "pred_first": 308.42,
+   "act_first": 310.03
+  },
+  {
+   "week": 8,
+   "start_date": "2026-08-25",
+   "end_date": "2026-08-31",
+   "mape": 0.00679,
+   "rmse": 2.6997,
+   "bias": -1.9811,
+   "dir_acc": 0.6,
+   "weights": {
+    "ridge": 0.321,
+    "knn": 0.375,
+    "tree": 0.304
+   },
+   "pred_first": 310.33,
+   "act_first": 309.9
+  },
+  {
+   "week": 9,
+   "start_date": "2026-09-01",
+   "end_date": "2026-09-08",
+   "mape": 0.01734,
+   "rmse": 6.2983,
+   "bias": 1.2566,
+   "dir_acc": 0.6,
+   "weights": {
+    "ridge": 0.321,
+    "knn": 0.375,
+    "tree": 0.303
+   },
+   "pred_first": 321.08,
+   "act_first": 325.13
+  },
+  {
+   "week": 10,
+   "start_date": "2026-09-09",
+   "end_date": "2026-09-15",
+   "mape": 0.03533,
+   "rmse": 12.9609,
+   "bias": -11.1975,
+   "dir_acc": 0.4,
+   "weights": {
+    "ridge": 0.321,
+    "knn": 0.375,
+    "tree": 0.304
+   },
+   "pred_first": 316.57,
+   "act_first": 315.34
+  },
+  {
+   "week": 11,
+   "start_date": "2026-09-16",
+   "end_date": "2026-09-22",
+   "mape": 0.01734,
+   "rmse": 6.689,
+   "bias": -5.8668,
+   "dir_acc": 0.4,
+   "weights": {
+    "ridge": 0.321,
+    "knn": 0.374,
+    "tree": 0.305
+   },
+   "pred_first": 332.39,
+   "act_first": 332.41
+  },
+  {
+   "week": 12,
+   "start_date": "2026-09-23",
+   "end_date": "2026-09-29",
+   "mape": 0.00995,
+   "rmse": 3.7035,
+   "bias": -0.8187,
+   "dir_acc": 0.6,
+   "weights": {
+    "ridge": 0.322,
+    "knn": 0.375,
+    "tree": 0.303
+   },
+   "pred_first": 338.69,
+   "act_first": 337.02
+  },
+  {
+   "week": 13,
+   "start_date": "2026-09-30",
+   "end_date": "2026-10-06",
+   "mape": 0.00637,
+   "rmse": 2.3671,
+   "bias": 1.6887,
+   "dir_acc": 0.6,
+   "weights": {
+    "ridge": 0.322,
+    "knn": 0.376,
+    "tree": 0.302
+   },
+   "pred_first": 331.95,
+   "act_first": 333.02
+  },
+  {
+   "week": 14,
+   "start_date": "2026-10-07",
+   "end_date": "2026-10-13",
+   "mape": 0.00883,
+   "rmse": 3.3416,
+   "bias": -3.0016,
+   "dir_acc": 0.6,
+   "weights": {
+    "ridge": 0.32,
+    "knn": 0.378,
+    "tree": 0.302
+   },
+   "pred_first": 334.93,
+   "act_first": 336.67
+  },
+  {
+   "week": 15,
+   "start_date": "2026-10-14",
+   "end_date": "2026-10-20",
+   "mape": 0.00819,
+   "rmse": 3.3675,
+   "bias": 2.7973,
+   "dir_acc": 0.4,
+   "weights": {
+    "ridge": 0.321,
+    "knn": 0.378,
+    "tree": 0.301
+   },
+   "pred_first": 343.04,
+   "act_first": 342.96
+  },
+  {
+   "week": 16,
+   "start_date": "2026-10-21",
+   "end_date": "2026-10-21",
+   "mape": 0.00332,
+   "rmse": 1.1352,
+   "bias": -1.1352,
+   "dir_acc": 1.0,
+   "weights": {
+    "ridge": 0.321,
+    "knn": 0.382,
+    "tree": 0.298
+   },
+   "pred_first": 340.96,
+   "act_first": 342.1
+  }
+ ]
+}

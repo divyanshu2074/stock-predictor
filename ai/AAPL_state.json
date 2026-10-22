@@ -1,0 +1,31 @@
+{
+ "pending": {
+  "as_of_date": "2026-10-21",
+  "as_of_close": 342.1,
+  "target_date": null,
+  "predicted_return": 0.00171,
+  "predicted_close": 342.69,
+  "confidence_band": [
+   324.23,
+   359.97
+  ],
+  "bias_correction_applied": 0.0,
+  "direction": "UP",
+  "model_votes": {
+   "ridge": 0.00023,
+   "knn": 0.00399,
+   "tree": 0.00038
+  }
+ },
+ "grades": [
+  {
+   "cycle": 0,
+   "target_date": "2026-10-21",
+   "predicted": 340.58,
+   "actual": 342.1,
+   "err_pct": 0.00446,
+   "direction_correct": true
+  }
+ ],
+ "cycles": 1
+}

@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>StockPRED — Self-Learning Stock Predictor on GitHub</title>
+<style>
+:root{--bg:#0b0f17;--card:#121826;--line:#1f2a3d;--txt:#dbe4f3;--mut:#8fa1bf;--acc:#4da3ff;--up:#2ecc71;--dn:#e74c3c;--warn:#f1c40f}
+*{box-sizing:border-box}body{margin:0;font-family:ui-sans-serif,system-ui,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--txt)}
+header{padding:28px 20px 10px;max-width:1150px;margin:0 auto}
+h1{margin:0;font-size:26px}.sub{color:var(--mut);margin-top:6px;font-size:14px;line-height:1.5}
+.badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.badge{background:var(--card);border:1px solid var(--line);color:var(--mut);font-size:12px;padding:4px 10px;border-radius:999px}
+nav{max-width:1150px;margin:14px auto 0;padding:0 20px;display:flex;gap:10px;flex-wrap:wrap}
+nav button{background:var(--card);border:1px solid var(--line);color:var(--txt);padding:8px 14px;border-radius:8px;cursor:pointer;font-size:14px}
+nav button.on{border-color:var(--acc);color:var(--acc)}
+main{max-width:1150px;margin:0 auto;padding:18px 20px 60px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.k{color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.06em}
+.v{font-size:24px;font-weight:700;margin-top:6px}
+.up{color:var(--up)}.dn{color:var(--dn)}
+canvas{width:100%;height:auto;display:block}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:7px 9px;border-bottom:1px solid var(--line);text-align:left}
+th{color:var(--mut);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.05em}
+.big{font-size:44px;font-weight:800}.pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700}
+.pill.up{background:rgba(46,204,113,.15)}.pill.dn{background:rgba(231,76,60,.15)}
+.row{display:flex;gap:16px;flex-wrap:wrap}.row>*{flex:1;min-width:280px}
+.flow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:13px;color:var(--mut);margin:10px 0}
+.step{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 12px;color:var(--txt)}
+.arrow{color:var(--acc)}
+.note{border-left:3px solid var(--warn);background:rgba(241,196,15,.06);padding:10px 14px;border-radius:6px;font-size:13px;color:#e8dfb8}
+select,input[type=text]{background:var(--card);border:1px solid var(--line);color:var(--txt);padding:8px 10px;border-radius:8px;font-size:14px}
+footer{max-width:1150px;margin:0 auto;padding:0 20px 40px;color:var(--mut);font-size:12px}
+a{color:var(--acc)}
+</style>
+</head>
+<body>
+<header>
+  <h1>📈 StockPRED <span style="font-size:14px;color:var(--mut)">self-learning prediction engine · runs 100% on GitHub</span></h1>
+  <div class="sub">Recursive walk-forward learning: train → predict next week → measure deviation → fine-tune model mix → add week to training → repeat → live next-day forecast. Every stage is a GitHub Action; every artifact (data, model, metrics) lives in this repository.</div>
+  <div class="badges">
+    <span class="badge">🤖 GitHub Actions cron</span><span class="badge">🧠 ensemble: ridge + kNN + tree</span>
+    <span class="badge">📊 Yahoo Finance data</span><span class="badge">💾 state committed back to repo</span>
+    <span class="badge">🔐 zero secrets required</span>
+  </div>
+</header>
+<nav id="tabs"></nav>
+<main id="app"><div class="card">Loading <code>data.js</code>…</div></main>
+<footer>Built with pure Python (stdlib models) on GitHub Actions + GitHub Pages. Not investment advice — markets are noisy and even self-improving models can be wrong.</footer>
+<script src="data.js"></script>
+<script>
+const D = window.STOCKPRED_DATA || {};
+const syms = Object.keys(D);
+let curSym = syms[0], curTab = 'overview';
+const tabs = ['overview','learning-curve','next-day','live-grades','backtest-log','how-it-works'];
+const $ = s => document.querySelector(s);
+const fmt = (x,d=2)=>x==null?'—':Number(x).toFixed(d);
+const pct = x=>x==null?'—':(100*x).toFixed(2)+'%';
+
+function renderTabs(){
+  $('#tabs').innerHTML = tabs.map(t=>`<button class="${t===curTab?'on':''}" onclick="go('${t}')">${t.replace(/-/g,' ')}</button>`).join('')
+   + (syms.length?` &nbsp; <select onchange="curSym=this.value;render()">${syms.map(s=>`<option ${s===curSym?'selected':''}>${s}</option>`).join('')}</select>`:'');
+}
+window.go=t=>{curTab=t;render()};
+function render(){
+  renderTabs();
+  if(!syms.length){$('#app').innerHTML='<div class="card">No model artifacts yet. Add the <b>Train Engine</b> workflow or run <code>python scripts/train.py AAPL</code> via workflow_dispatch.</div>';return;}
+  const S=D[curSym];
+  $('#app').innerHTML=({overview:ov,learn:lc,'learning-curve':lc,'next-day':nd,'live-grades':lg,'backtest-log':bl,'how-it-works':hiw})[curTab](S);
+  if(curTab==='overview'||curTab==='learn') drawCharts(S);
+}
+function ov(S){
+  const b=S.backtest.summary,p=S.prediction,g=S.grades||[];
+  const acc=g.length?(g.filter(x=>x.direction_correct).length/g.length):null;
+  return `<div class="grid">
+  <div class="card"><div class="k">Next-day call for ${curSym}</div><div class="big ${p.direction==='UP'?'up':'dn'}">${p.direction==='UP'?'▲':'▼'} ${pct(p.predicted_return)}</div><div class="k" style="text-transform:none">target close <b>${fmt(p.predicted_close)}</b> by ${p.target_date||'next session'}</div></div>
+  <div class="card"><div class="k">Backtest mean MAPE (weekly chained)</div><div class="v">${pct(b.mean_mape)}</div><div class="k" style="text-transform:none">${b.weeks_simulated} recursive weeks simulated</div></div>
+  <div class="card"><div class="k">Direction accuracy (backtest median)</div><div class="v">${fmt(b.median_dir_acc,2)}</div><div class="k" style="text-transform:none">live graded accuracy: ${acc==null?'pending first grade':(100*acc).toFixed(0)+'%'}</div></div>
+  <div class="card"><div class="k">Self-improvement signal</div><div class="v ${b.improvement.last_half_mape<b.improvement.first_half_mape?'up':'dn'}">${b.improvement.last_half_mape<b.improvement.first_half_mape?'↓ error '+pct(b.improvement.first_half_mape-b.improvement.last_half_mape):'↑ error '+pct(b.improvement.last_half_mape-b.improvement.first_half_mape)}</div><div class="k" style="text-transform:none">MAPE first half → last half of walk-forward</div></div>
+  </div>
+  <div class="row" style="margin-top:14px"><div class="card"><div class="k">Price + forecast band (${S.bars.length} sessions)</div><canvas id="cvPrice" w="800" h="260"></canvas></div>
+  <div class="card"><div class="k">Model weights evolution (inverse-error adaptation)</div><canvas id="cvW" w="800" h="260"></canvas></div></div>
+  <div class="note" style="margin-top:14px">⚠️ Educational experiment. A model that improves its own weekly error is not a money printer — daily stock returns are near-random. Never trade real money on these forecasts.</div>`;
+}
+function lc(S){
+  const H=S.backtest.history;
+  return `<div class="card"><div class="k">Weekly deviation during recursive learning (lower = better)</div><canvas id="cvMape" w="1000" h="300"></canvas></div>
+  <div class="card" style="margin-top:14px"><div class="k">Direction accuracy per week</div><canvas id="cvDir" w="1000" h="220"></canvas></div>`;
+}
+function nd(S){
+  const p=S.prediction,v=p.model_votes||{};
+  return `<div class="card"><div class="row">
+  <div><div class="k">As of ${p.as_of_date}</div><div class="big">$${fmt(p.as_of_close)}</div></div>
+  <div><div class="k">Predicted close (${p.target_date||'next trading day'})</div><div class="big ${p.direction==='UP'?'up':'dn'}">$${fmt(p.predicted_close)} <span class="pill ${p.direction==='UP'?'up':'dn'}">${p.direction} ${pct(p.predicted_return)}</span></div></div>
+  <div><div class="k">Confidence band</div><div class="v">$${fmt(p.confidence_band[0])} – $${fmt(p.confidence_band[1])}</div><div class="k" style="text-transform:none">±3·ATR envelope around forecast</div></div></div>
+  <div class="k" style="margin-top:18px">Model votes (predicted 1-day return)</div><table><tr><th>model</th><th>vote</th><th>stance</th></tr>
+  ${Object.entries(v).map(([m,r])=>`<tr><td>${m}</td><td>${pct(r)}</td><td class="${r>0?'up':'dn'}">${r>0?'bullish':'bearish'}</td></tr>`).join('')}
+  <tr><td><b>ensemble</b></td><td><b>${pct(p.predicted_return)}</b></td><td class="${p.predicted_return>0?'up':'dn'}"><b>${p.direction}</b></td></tr></table>
+  <div class="k" style="margin-top:10px">Bias correction learned from live grades: ${pct(p.bias_correction_applied||0)}</div></div>`;
+}
+function lg(S){
+  const g=(S.grades||[]).slice().reverse();
+  if(!g.length)return '<div class="card">No live grades yet — the daily workflow will grade the first pending forecast after the next market close.</div>';
+  return `<div class="card"><table><tr><th>cycle</th><th>target date</th><th>predicted</th><th>actual</th><th>error %</th><th>direction</th></tr>
+  ${g.map(x=>`<tr><td>#${x.cycle}</td><td>${x.target_date}</td><td>$${fmt(x.predicted)}</td><td>$${fmt(x.actual)}</td><td>${pct(x.err_pct)}</td><td class="${x.direction_correct?'up':'dn'}">${x.direction_correct?'✔ correct':'✘ wrong'}</td></tr>`).join('')}</table></div>`;
+}
+function bl(S){
+  const H=S.backtest.history.slice().reverse();
+  return `<div class="card" style="overflow-x:auto"><table><tr><th>week</th><th>period</th><th>MAPE</th><th>RMSE</th><th>bias $</th><th>dir acc</th><th>ridge</th><th>knn</th><th>tree</th></tr>
+  ${H.map(h=>`<tr><td>${h.week}</td><td>${h.start_date}→${h.end_date}</td><td>${pct(h.mape)}</td><td>${fmt(h.rmse)}</td><td>${fmt(h.bias)}</td><td>${fmt(h.dir_acc,2)}</td><td>${h.weights.ridge}</td><td>${h.weights.knn}</td><td>${h.weights.tree}</td></tr>`).join('')}</table></div>`;
+}
+function hiw(){
+  return `<div class="card">
+  <div class="flow"><span class="step">1️⃣ download 1y of OHLCV</span><span class="arrow">→</span><span class="step">2️⃣ build ensemble on first ~70%</span><span class="arrow">→</span><span class="step">3️⃣ chain-predict next week</span><span class="arrow">→</span><span class="step">4️⃣ compare vs reality (deviation)</span><span class="arrow">→</span><span class="step">5️⃣ reweight / fine-tune models</span><span class="arrow">→</span><span class="step">6️⃣ fold that week into training</span><span class="arrow">↺</span></div>
+  <p>Steps 1–6 repeat across all remaining history (<b>recursive learning compressed into one bootstrap run</b>). After bootstrapping, the <b>Daily Learn &amp; Predict</b> workflow repeats step cycle in real time:</p>
+  <div class="flow"><span class="step">🌙 cron 21:30 UTC</span><span class="arrow">→</span><span class="step">grade yesterday's forecast</span><span class="arrow">→</span><span class="step">append new bar</span><span class="arrow">→</span><span class="step">recency-weighted refit</span><span class="arrow">→</span><span class="step">new next-day prediction</span><span class="arrow">→</span><span class="step">commit ai/ + web/data.js</span><span class="arrow">→</span><span class="step">Pages redeploy</span></div>
+  <p><b>What "self-improving" concretely means here:</b> (a) ensemble member weights are recomputed every week from inverse measured error, so consistently-wrong models get voted off the island; (b) a bias-correction term is learned from live graded errors; (c) training uses recency-decayed sample weights (0.98^age) so recent regimes dominate; (d) every few cycles the full walk-forward re-runs and only the best-adapted configuration persists.</p>
+  <p><b>State of the system is the repository itself:</b> <code>ai/cache/*.json</code> (training data), <code>ai/*_model.json</code> (serialized ensemble), <code>ai/*_state.json</code> (pending predictions + live grades), <code>ai/*_backtest.json</code> (learning curve). Git commits are literally the memory of the agent.</p>
+  <p>Add new stocks anytime with the <b>Add Stock</b> workflow (workflow_dispatch) — it bootstraps the same loop for any Yahoo ticker.</p>
+  </div>`;
+}
+// ---- tiny canvas charts ----
+function setup(cv){const r=cv.getBoundingClientRect();const dpr=window.devicePixelRatio||1;cv.width=r.width*dpr;cv.height=(cv.getAttribute('h')||240)*dpr;cv.style.height=(cv.getAttribute('h')||240)+'px';const c=cv.getContext('2d');c.scale(dpr,dpr);return[c,r.width,+cv.getAttribute('h')||240];}
+function line(c,W,H,xs,ys,color,fill){c.beginPath();xs.forEach((x,i)=>{i?c.lineTo(x,ys):c.moveTo(x,ys)});if(fill){c.lineTo(W,H-20);c.lineTo(0,H-20);c.fillStyle=color+'22';c.fill();}else{c.strokeStyle=color;c.lineWidth=2;c.stroke();}}
+function series(vals,min,max,W,H,pad){const n=vals.length;return vals.map((v,i)=>[pad+i*(W-2*pad)/Math.max(1,n-1), H-24-(v-min)/(max-min+1e-12)*(H-48)]);}
+function drawCharts(S){
+  const bars=S.bars,cs=bars.map(b=>b.close);
+  if($('#cvPrice')){const[c,W,H]=setup($('#cvPrice'));
+    const[min,max]=[Math.min(...cs),Math.max(...cs)];
+    const[xs,ys]=series(cs,min,max,W,H,8);
+    c.clearRect(0,0,W,H);line(c,W,H,xs,ys,'#4da3ff',true);
+    const p=S.prediction;
+    if(p&&p.predicted_close){const px=W-8,py=H-24-(p.predicted_close-min)/(max-min)*(H-48);
+      c.fillStyle=p.direction==='UP'?'#2ecc71':'#e74c3c';c.beginPath();c.arc(px,py,5,0,7);c.fill();
+      c.font='11px sans-serif';c.fillText('$'+p.predicted_close.toFixed(1)+' →',px-58,py-8);}
+    c.fillStyle='#8fa1bf';c.font='11px sans-serif';c.fillText(min.toFixed(0),4,14);c.fillText(max.toFixed(0),4,H-10);}
+  if($('#cvW')){const[c,W,H]=setup($('#cvW'));c.clearRect(0,0,W,H);
+    const Hs=S.backtest.history;['ridge','knn','tree'].forEach((m,i)=>{
+      const vals=Hs.map(h=>h.weights[m]);const[xs,ys]=series(vals,0,1,W,H,8);
+      line(c,W,H,xs,ys,['#4da3ff','#2ecc71','#f1c40f'][i]);});
+    c.fillStyle='#8fa1bf';c.font='11px sans-serif';c.fillText('ridge',W-150,20);c.fillStyle='#2ecc71';c.fillText('knn',W-100,20);c.fillStyle='#f1c40f';c.fillText('tree',W-60,20);}
+  if($('#cvMape')){const[c,W,H]=setup($('#cvMape'));c.clearRect(0,0,W,H);
+    const Hs=S.backtest.history,mapes=Hs.map(h=>h.mape);
+    const[min,max]=[0,Math.max(...mapes)];const[xs,ys]=series(mapes,min,max,W,H,10);
+    xs.forEach((x,i)=>{c.fillStyle='#4da3ff';c.fillRect(x-3,ys[i],6,H-24-ys[i]);});
+    // trend line
+    const t=series(mapes.map((_,i)=>mapes.slice(Math.max(0,i-3),i+1).reduce((a,b)=>a+b,0)/Math.min(4,i+1)),min,max,W,H,10);
+    line(c,W,H,t[0],t[1],'#e74c3c');
+    c.fillStyle='#8fa1bf';c.font='11px sans-serif';c.fillText('weekly MAPE (%)',10,16);c.fillText('red = rolling avg',W-140,16);}
+  if($('#cvDir')){const[c,W,H]=setup($('#cvDir'));c.clearRect(0,0,W,H);
+    const Hs=S.backtest.history;const[xs,ys]=series(Hs.map(h=>h.dir_acc||0),0,1,W,H,10);
+    line(c,W,H,xs,ys,'#2ecc71',true);
+    const y0=H-24-(0.5)/(1)*(H-48);c.strokeStyle='#8fa1bf55';c.setLineDash([4,4]);c.beginPath();c.moveTo(10,y0);c.lineTo(W-10,y0);c.stroke();c.setLineDash([]);
+    c.fillStyle='#8fa1bf';c.font='11px sans-serif';c.fillText('0.5 = coin flip',12,y0-6);}
+}
+render();window.addEventListener('resize',()=>{if(curTab==='overview'||curTab==='learn')render();});
+</script>
+</body>
+</html>

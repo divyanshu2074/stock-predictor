@@ -1,0 +1,61 @@
+name: Add / Retrain Stock
+
+# Bootstrap the recursive-learning engine for any Yahoo ticker.
+# Takes ~1 minute per symbol on a free runner. Commits data cache, model,
+# backtest learning curve and first next-day prediction; Pages updates automatically.
+
+on:
+  workflow_dispatch:
+    inputs:
+      symbol:
+        description: Ticker symbol(s), space-separated (e.g. MSFT NVDA TSLA)
+        required: true
+        default: AAPL
+      full_backtest_every_day:
+        description: Re-run full walk-forward on every daily cycle too? (slow)
+        type: boolean
+        required: false
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  train:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install deps
+        run: pip install yfinance
+
+      - name: Recursive learning bootstrap
+        run: python scripts/train.py ${{ github.event.inputs.symbol }}
+
+      - name: Remember cadence preference
+        if: ${{ github.event.inputs.full_backtest_every_day }}
+        run: touch ai/FULL_BACKTEST.flag
+
+      - name: Commit artifacts
+        run: |
+          git config user.name "stockpred-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add ai/ web/data.js
+          git commit -m "train: recursive-learning bootstrap for ${{ github.event.inputs.symbol }} [skip ci]"
+          git push origin HEAD:${{ github.ref_name }}
+
+      - name: Summary
+        run: |
+          {
+            echo "## ✅ Trained ${{ github.event.inputs.symbol }}"
+            for f in ai/*_backtest.json; do
+              sym=$(basename "$f" _backtest.json)
+              python3 -c "
+          import json;s=json.load(open('$f'))['summary']
+          print(f\"**{s['symbol']}**: {s['weeks_simulated']} recursive weeks | mean weekly MAPE {100*s['mean_mape']:.2f}% | median dir-acc {s['median_dir_acc']} | error {'decreased' if s['improvement']['last_half_mape']<s['improvement']['first_half_mape'] else 'increased'} during learning\")"
+            done
+          } >> "$GITHUB_STEP_SUMMARY"
