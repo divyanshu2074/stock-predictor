@@ -1,18 +1,18 @@
 {
- "as_of_date": "2026-10-23",
- "as_of_close": 347.725,
+ "as_of_date": "2026-10-26",
+ "as_of_close": 343.91,
  "target_date": null,
- "predicted_return": -0.00553,
- "predicted_close": 345.8,
+ "predicted_return": 0.00356,
+ "predicted_close": 345.13,
  "confidence_band": [
-  329.11,
-  366.34
+  324.67,
+  363.15
  ],
  "bias_correction_applied": 0.0,
- "direction": "DOWN",
+ "direction": "UP",
  "model_votes": {
-  "ridge": 0.00019,
-  "knn": -0.00647,
-  "tree": -0.01061
+  "ridge": 0.00332,
+  "knn": 0.00179,
+  "tree": 0.00618
  }
 }
