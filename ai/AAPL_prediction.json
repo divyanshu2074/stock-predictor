@@ -1,18 +1,18 @@
 {
- "as_of_date": "2026-10-26",
- "as_of_close": 343.91,
+ "as_of_date": "2026-10-27",
+ "as_of_close": 347.1,
  "target_date": null,
- "predicted_return": 0.00356,
- "predicted_close": 345.13,
+ "predicted_return": 0.00381,
+ "predicted_close": 348.42,
  "confidence_band": [
-  324.67,
-  363.15
+  327.97,
+  366.23
  ],
  "bias_correction_applied": 0.0,
  "direction": "UP",
  "model_votes": {
-  "ridge": 0.00332,
-  "knn": 0.00179,
-  "tree": 0.00618
+  "ridge": 0.00168,
+  "knn": 0.00673,
+  "tree": 0.00225
  }
 }
